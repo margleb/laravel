@@ -1,77 +1,76 @@
-@extends('layouts.app')
+@extends('marketing.skeleton')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+    <body class="marketing register">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3 offset-md-3-right">
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                <div class="signup-box">
+                    <div class="dt w-100">
+                        <div class="dtc tc">
+                            <img src="img/monica.svg" width="97" height="88" alt="">
+                        </div>
+                    </div>
+
+                    @include ('partials.errors')
+                    @if (session('confirmation-success'))
+                        <div class="alert alert-success">
+                            {{ session('confirmation-success') }}
+                        </div>
+                    @endif
+
+                    <form action="register" method="post">
                         @csrf
 
-                        <div class="row mb-3">
-                            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
+                        <div class="form-group">
+                            <label for="email">{{ trans('auth.register_email') }}</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="{{ trans('auth.register_email_example') }}" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                        </div>
 
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
-
-                                @error('name')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="first_name">{{ trans('auth.register_firstname') }}</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="{{ trans('auth.register_firstname_example') }}" value="{{ old('first_name') }}" required autocomplete="given-name">
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="form-group">
+                                    <label for="last_name">{{ trans('auth.register_lastname') }}</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="{{ trans('auth.register_lastname_example') }}" value="{{ old('last_name') }}" required autocomplete="family-name">
+                                </div>
                             </div>
                         </div>
 
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('E-Mail Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <div class="form-group">
+                            <label for="password">{{ trans('auth.register_password') }}</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="{{ trans('auth.register_password_example') }}" required autocomplete="password">
                         </div>
 
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <div class="form-group">
+                            <label for="password_confirmation">{{ trans('auth.register_password_confirmation') }}</label>
+                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required autocomplete="password">
                         </div>
 
-                        <div class="row mb-3">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                            </div>
+                        <!-- Policy acceptance check -->
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" id="policy" name="policy" type="checkbox" value="policy" required>
+                                {!! trans('auth.register_policy', ['url' => 'https://monicahq.com/privacy', 'urlterm' => 'https://monicahq.com/terms', 'hreflang' => 'en', ]) !!}
+                            </label>
                         </div>
 
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
-                                </button>
-                            </div>
+                        <div class="form-group actions">
+                            <input type="hidden" name="lang" value="{{ App::getLocale() }}" />
+                            <button type="submit" class="btn btn-primary">{{ trans('auth.register_action') }}</button>
                         </div>
+
                     </form>
                 </div>
+
             </div>
         </div>
     </div>
-</div>
+    </body>
 @endsection

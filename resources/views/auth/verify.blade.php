@@ -1,28 +1,42 @@
-@extends('layouts.app')
+@extends('marketing.skeleton')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Verify Your Email Address') }}</div>
+    <body class="marketing register">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3 offset-md-3-right">
+                <div class="signup-box">
 
-                <div class="card-body">
-                    @if (session('resent'))
-                        <div class="alert alert-success" role="alert">
-                            {{ __('A fresh verification link has been sent to your email address.') }}
+                    <div class="dt w-100">
+                        <div class="dtc tc">
+                            <img src="img/monica.svg" width="97" height="88" alt="">
                         </div>
-                    @endif
+                    </div>
+                    <h2>{{ trans('auth.confirmation_title') }}</h2>
 
-                    {{ __('Before proceeding, please check your email for a verification link.') }}
-                    {{ __('If you did not receive the email') }},
-                    <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">{{ __('click here to request another') }}</button>.
-                    </form>
+                    <div class="card-body">
+                        @if (session('resent'))
+                            <div class="alert alert-success" role="alert">
+                                {{ trans('auth.confirmation_fresh') }}
+                            </div>
+                        @endif
+
+                        <p>
+                            {{ trans('auth.confirmation_check') }}
+                        </p>
+                        <p>
+                        <form action="{{ route('verification.resend') }}" method="post" class="di">
+                            @csrf
+                            {!! trans('auth.confirmation_request_another', ['action' => 'href="" onclick="this.parentNode.submit(); return false"']) !!}
+                        </form>
+                        </p>
+                        <p>
+                            {!! trans('auth.confirmation_again', ['url' => 'settings/emailchange1']) !!}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    </body>
 @endsection

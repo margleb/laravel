@@ -1,73 +1,82 @@
-@extends('layouts.app')
+@extends('marketing.skeleton')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+    <body class="marketing register">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3 offset-md-3-right">
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('login') }}">
+                <div class="signup-box">
+                    <div class="dt w-100">
+                        <div class="dtc tc">
+                            <img src="img/monica.svg" width="97" height="88" alt="">
+                        </div>
+                    </div>
+                    <h2>{{ trans('auth.login_to_account') }}</h2>
+
+                    @include ('partials.errors')
+                    @if (session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
+                    @if (session('confirmation-success'))
+                        <div class="alert alert-success">
+                            {{ session('confirmation-success') }}
+                        </div>
+                    @endif
+                    @if (session('confirmation-danger'))
+                        <div class="alert alert-danger">
+                            {!! __(session('confirmation-danger'), ['url' => 'confirmation/resend']) !!}
+                        </div>
+                        <div class="alert alert-danger">
+                            {!! trans('auth.confirmation_again', ['url' => 'settings/emailchange1']) !!}
+                        </div>
+                    @endif
+
+                    <form action="login" method="post">
                         @csrf
 
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('E-Mail Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <div class="form-group">
+                            <label for="email">{{ trans('auth.email') }}</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                         </div>
 
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
+                        <div class="form-group">
+                            <label for="password">{{ trans('auth.password') }}</label>
+                            <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password">
                         </div>
 
-                        <div class="row mb-3">
-                            <div class="col-md-6 offset-md-4">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-
-                                    <label class="form-check-label" for="remember">
-                                        {{ __('Remember Me') }}
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="form-group actions">
+                            <button type="submit" class="btn btn-primary">{{ trans('auth.login') }}</button>
                         </div>
 
-                        <div class="row mb-0">
-                            <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Login') }}
-                                </button>
+                        <div class="checkbox">
+                            <label for="remember">
+                                <input type="checkbox" name="remember" id="remember" checked>&nbsp;{{ trans('auth.button_remember') }}
+                            </label>
+                        </div>
 
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        {{ __('Forgot Your Password?') }}
-                                    </a>
+                        <div class="form-group links">
+                            <ul>
+                                <li>{{ trans('auth.password_forget') }}&nbsp;<a href="{{ route('password.request') }}">{{ trans('auth.password_reset') }}</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="form-group links">
+                            <ul>
+                                @if(! config('monica.disable_signup'))
+                                    <li>{{ trans('auth.signup_no_account') }}&nbsp;<a href="register">{{ trans('auth.signup') }}</a></li>
+                                @elseif(! \App\Helpers\InstanceHelper::hasAtLeastOneAccount())
+                                    <li>{!! trans('auth.create_account', ['url' => 'register']) !!}</li>
                                 @endif
-                            </div>
+                            </ul>
                         </div>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    </body>
 @endsection
