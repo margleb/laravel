@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\User;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Account\Account;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -18,9 +19,11 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'locale'
     ];
 
     /**
@@ -41,4 +44,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the account record associated with the user.
+     *
+     * @return BelongsTo
+     */
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

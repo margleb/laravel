@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\InstanceHelper;
+use App\Helpers\RequestHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Account\Account;
 use App\Providers\RouteServiceProvider;
-use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password as PasswordRules;
 
 class RegisterController extends Controller
 {
@@ -29,7 +32,7 @@ class RegisterController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    protected $redirectTo = '/dashboard';
 
     /**
      * Create a new controller instance.
@@ -49,10 +52,13 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        // валидириуем имя/фамилию/email/пароль/политику конфидициальности
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'first_name' => ['required', 'max:255'],
+            'last_name' => ['required', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'confirmed', PasswordRules::default()],
+            'policy' => 'required',
         ]);
     }
 
@@ -60,14 +66,41 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array  $data
-     * @return \App\Models\User
+     * @return \App\Models\User\User
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+
+        $hasNotAccount = !InstanceHelper::hasAtLeastOneAccount();
+
+        // прерываем код, если запрещена регистрация, либо нет ни одного аккаунта
+        if(!$hasNotAccount && config('monica.disable_signup') == 'true') {
+            abort(403, trans('auth.disabled_signup'));
+        }
+
+        try {
+
+            // создаем новый аккаунт
+            $account = Account::createDefault(
+                $data['first_name'],
+                $data['last_name'],
+                $data['email'],
+                $data['password'],
+                RequestHelper::ip(),
+                $data['lang']
+            );
+
+            $user = $account->users()->first();
+
+            // если не можем получить аккаунт то отправляем об этом сообщение
+            // if($user) {}
+
+            return $user;
+
+        } catch(\Exception $e) {
+            Log::error($e);
+            abort(500, trans('auth.signup_error'));
+        }
+
     }
 }
