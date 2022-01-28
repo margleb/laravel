@@ -3,8 +3,10 @@
 namespace App\Models\User;
 
 use App\Models\Account\Account;
+use App\Models\Settings\Term;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -53,5 +55,15 @@ class User extends Authenticatable
     public function account()
     {
         return $this->belongsTo(Account::class);
+    }
+
+    /**
+     * Get the term records associated with the user.
+     *
+     * @return BelongsToMany
+     */
+    public function terms()
+    {
+        return $this->belongsToMany(Term::class)->withPivot('ip_address')->withTimestamps();
     }
 }

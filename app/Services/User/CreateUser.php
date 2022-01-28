@@ -35,6 +35,11 @@ class CreateUser extends BaseService
         $user->save();
 
         // политика конфидициальности
+        app(AcceptPolicy::class)->execute([
+            'account_id' => $user->account_id,
+            'user_id' => $user->id,
+            'ip_address' => $ipAddress
+        ]);
 
         return $user;
     }

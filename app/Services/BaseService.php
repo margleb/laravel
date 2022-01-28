@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator;
 
 abstract class BaseService
@@ -26,6 +27,20 @@ abstract class BaseService
     public function validate(array $data): bool {
         Validator::make($data, $this->rules())->validate();
         return true;
+    }
+
+    /**
+     * Checks if the value is empty or null.
+     *
+     * @param  mixed  $data
+     * @param  mixed  $index
+     * @return mixed
+     */
+    public function nullOrValue($data, $index)
+    {
+        $value = Arr::get($data, $index, null);
+
+        return is_null($value) || $value === '' ? null : $value;
     }
 
 }
