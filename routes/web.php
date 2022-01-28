@@ -24,6 +24,11 @@ Route::get('/', [LoginController::class, 'showLoginOrRegister'])->name('loginRed
 
 Auth::routes();
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/logout', [LoginController::class, 'logout']);
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::name('dashboard.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('index');
